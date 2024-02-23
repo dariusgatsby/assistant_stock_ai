@@ -1,5 +1,8 @@
 from apis import get_news
 from openai import OpenAI
+import json 
+
+
 
 client = OpenAI()
 model = "gpt-4-turbo-preview"
@@ -9,12 +12,14 @@ class AssistantManager:
     thread_id = None
 
     def __init__(self, model=model) -> None:
+        self.id_dict = {}
         self.client = client
         self.model = model
         self.assistant = None
         self.thread = None
         self.run = None
         self.summary = None
+
 
         if AssistantManager.assistant_id:
             self.assistant = self.client.beta.assistants.retrieve(
@@ -25,18 +30,21 @@ class AssistantManager:
                 thread_id=AssistantManager.thread_id
             )
         
-    def create_assistant(self, name, instructions, tools):
+    def create_assistant(self, name, instructions, **kwargs):
         if not AssistantManager.assistant_id: 
             assistant_obj = self.client.beta.assistants.create(
                 model=self.model,
                 name=name,
                 instructions=instructions,
-                tools=tools,
+                tools= kwargs.get('tools', [])
             )
             self.assistant = assistant_obj
             AssistantManager.assistant_id = assistant_obj.id
 
-            return f"Assistant created sucessfully Assistant ID: {assistant_obj.id}"
+            print(f"Your Assistant {name} was created sucessfully; Assistant ID: {assistant_obj.id}")
+            self.id_dict[name] = {}
+            self.id_dict[name].update({"assistant_id": assistant_obj.id})
+            self.save_ids()
     
     def create_thread(self):
         if not AssistantManager.thread_id:
@@ -44,7 +52,12 @@ class AssistantManager:
             self.thread = thread_obj
             AssistantManager.thread_id = thread_obj.id
 
-            return f"Thread created sucessfully Thread ID: {thread_obj.id}"
+            print(f"Thread created sucessfully Thread ID: {thread_obj.id}")
+
+            self.id_dict[self.assistant.name].update({"thread_id": thread_obj.id})
+            self.save_ids()
+
+            
 
 
     def create_message(self, role, content):
@@ -64,6 +77,7 @@ class AssistantManager:
                 instructions=instructions
             )
             self.run = run
+            self.process_messages()
 
     def process_messages(self):
         if self.run:
@@ -73,4 +87,7 @@ class AssistantManager:
             last_message = messages.data[0]
             response = last_message.content[0].text.value
             print(f"Assistant Response: {response}")
-        
+    
+    def save_ids(self): 
+        with open("id_file.json", 'w') as file:
+            json.dump(self.id_dict, file, indent=4)

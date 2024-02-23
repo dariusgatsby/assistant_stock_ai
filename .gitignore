@@ -1,3 +1,5 @@
 .notes
 .env
 openai-env
+id_file.json
+__pycache__
