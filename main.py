@@ -7,7 +7,8 @@ manager = AssistantManager()
 if os.path.exists('id_file.json'):
     with open('id_file.json') as file:
         id_values = json.load(file)
-    print(id_values)
+    manager.assistant_id = id_values['Alfred']['assistant_id']
+    manager.thread_id = id_values['Alfred']['thread_id']
 
 else:
     assistant_name = input("What would you like to name the assistant: ")
@@ -18,8 +19,12 @@ else:
     manager.create_thread()
 
 content = input("Ask a question: ")
-manager.create_message(
-    role="user",
-    content=content
+if content != "skip":
+    manager.create_message(
+        role="user",
+        content=content,
 )
-manager.run_assistant
+    manager.run_assistant()
+elif content == "skip":
+    manager.run_assistant()
+print("main", manager.run.status)

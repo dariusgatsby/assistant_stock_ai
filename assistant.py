@@ -1,11 +1,14 @@
 from apis import get_news
 from openai import OpenAI
 import json 
+import time
 
 
 
 client = OpenAI()
 model = "gpt-4-turbo-preview"
+
+get_news
 
 class AssistantManager:
     assistant_id = None
@@ -57,11 +60,8 @@ class AssistantManager:
             self.id_dict[self.assistant.name].update({"thread_id": thread_obj.id})
             self.save_ids()
 
-            
-
-
     def create_message(self, role, content):
-        if self.thread_id:
+        if self.thread_id and content != "skip":
             client.beta.threads.messages.create(
                     thread_id=self.thread_id,
                     role=role,
@@ -69,24 +69,34 @@ class AssistantManager:
             )
 
 
-    def run_assistant(self, instructions):
+    def run_assistant(self):
         if self.assistant_id and self.thread_id:
             run = self.client.beta.threads.runs.create(
                 thread_id=self.thread_id,
                 assistant_id=self.assistant_id,
-                instructions=instructions
             )
             self.run = run
             self.process_messages()
+            
 
     def process_messages(self):
         if self.run:
+            print("PROCESSING MESSAGES")
             messages = client.beta.threads.messages.list(
                 thread_id=self.thread_id
                 )
-            last_message = messages.data[0]
-            response = last_message.content[0].text.value
-            print(f"Assistant Response: {response}")
+            data = messages.data
+            print(len(data))
+        
+            print(f"{messages.data[0].role.title()}: {messages.data[0].content[0].text.value}")
+            print(f"{messages.data[1].role.title()}: {messages.data[1].content[0].text.value}")
+            
+
+                
+            # response = last_message.content[0].text.value
+            # print(f"Assistant Response: {response}")
+        else:
+            print("No messages to process")
     
     def save_ids(self): 
         with open("id_file.json", 'w') as file:
