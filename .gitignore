@@ -3,3 +3,5 @@
 openai-env
 id_file.json
 __pycache__
+finnhub_data.json
+test_files/

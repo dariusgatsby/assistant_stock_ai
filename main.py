@@ -18,13 +18,27 @@ else:
         )
     manager.create_thread()
 
-content = input("Ask a question: ")
-if content != "skip":
-    manager.create_message(
+content = input("question/status: q/s ")
+
+if content == "s":
+    checking = True
+    while checking:
+        check_settings = int(input("Settings: 1.Check Assistant ID \n2.Check Thread ID\n"))
+        if check_settings == 1:
+            print(manager.assistant_id)
+            break
+        elif check_settings == 2:
+            print(manager.thread_id)
+            break
+        else:
+            print("invalid entry")
+            continue
+
+print(f"Assistant: {manager.name}\n Assistant Id: {manager.assistant_id}\n Thread Id: {manager.thread_id}")
+content = input("Enter a question: ")
+manager.create_message(
         role="user",
         content=content,
 )
-    manager.run_assistant()
-elif content == "skip":
-    manager.run_assistant()
-print("main", manager.run.status)
+manager.run_assistant()
+manager.wait_until_completed()
