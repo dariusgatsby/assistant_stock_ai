@@ -1,6 +1,7 @@
 .notes
 .env
 openai-env
+openai-venv
 id_file.json
 __pycache__
 finnhub_data.json
