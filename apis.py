@@ -39,34 +39,34 @@ data = finnhub_client.company_basic_financials('AAPL', 'all')
 with open("finnhub_data.json", "w") as file:
     json.dump(data, file, indent=4)
 
-topic = input("Enter a news topic: ")
-news = get_news(topic)
-articles = []
-blog_urls = []
-for i in news['articles']:
+#topic = input("Enter a news topic: ")
+#news = get_news(topic)
+#articles = []
+#blog_urls = []
+#for i in news['articles']:
     # source = i['source']['name']
     # title = i["title"] 
     # content = i["content"]
-    url = i['url']
+ #   url = i['url']
 
     # item = f"Source: {source},\nTitle: {title},\nContent: {content},\nUrl: {url}\n\n"
     # articles.append(item)
-    blog_urls.append(url)
+  #  blog_urls.append(url)
 
-j = 1
-for url in blog_urls:
-        print(f"Fetching content from {url}...")
-        content = fetch_blog_content(url)
-        if content:
+#j = 1
+#for url in blog_urls:
+#        print(f"Fetching content from {url}...")
+#        content = fetch_blog_content(url)
+ #       if content:
             # Do something with the fetched content
-            print(f"Content fetched successfully from {url}")
+  #          print(f"Content fetched successfully from {url}")
             # For demonstration, you can print the content
-            with open(f"test_files/test_html{j}.txt", 'w') as file:
-                  file.write(content)
-                  j += 1
-            print("\n")
-        else:
-            print(f"Failed to fetch content from {url}")
+   #         with open(f"test_files/test_html{j}.txt", 'w') as file:
+    #              file.write(content)
+     #             j += 1
+      #      print("\n")
+       # else:
+        #    print(f"Failed to fetch content from {url}")
 
 
 

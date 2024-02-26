@@ -97,7 +97,6 @@ class AssistantManager:
         
             content_string = f"{messages.data[0].role.title()}: {messages.data[0].content[0].text.value}"
             print(content_string)
-            print(f"{messages.data[0].role.title()}: {messages.data[0].content[0].text.value}")
             self.summary.append(content_string)
             return self.summary
             
