@@ -3,7 +3,8 @@ from newsapi import NewsApiClient
 import os
 import finnhub
 import json
-import urllib
+import requests
+from bs4 import BeautifulSoup
 
 load_dotenv()
 NEWS_API_KEY = os.getenv("NEWS_API_KEY")
@@ -23,17 +24,25 @@ def get_news(topic):
     return news
 
 
-def fetch_blog_content(url):
-    try:
-        # Open the URL and read its content
-        with urllib.request.urlopen(url) as response:
-            html_content = response.read()
-            # Decode bytes to utf-8
-            decoded_content = html_content.decode('utf-8')
-            return decoded_content
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return None
+urls = []
+j = 1
+for i in news['articles']:
+    url = i['url']
+    urls.append(url)
+    for url in urls:
+        res = requests.get(url)
+        if res.status_code == 200:
+            html_content = res.text
+            html_str = res.text
+
+            with open(f"index{j}.html", 'w', encoding='utf-8') as file:
+                file.write(html_content)
+            print("yup")
+            break
+        else:
+            print("Nope")
+
+soup = BeautifulSoup(html_str, 'html.parser')
 
 data = finnhub_client.company_basic_financials('AAPL', 'all')
 with open("finnhub_data.json", "w") as file:
